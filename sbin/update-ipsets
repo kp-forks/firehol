@@ -4086,6 +4086,7 @@ ipdeny_country() {
 	do
 		x=${x/*\//}
 		x=${x/.zone/}
+		[ -z "${x}" ] && continue
 		IPDENY_COUNTRIES[${x}]="1"
 
 		ipset_verbose "${ipset}" "extracting country '${x}' (code='${x^^}', name='${IPDENY_COUNTRY_NAMES[${x}]}')..."
@@ -4173,7 +4174,7 @@ ip2location_country() {
 
 	local ipset="ip2location_country" limit="" hash="net" ipv="ipv4" \
 		mins=$[24 * 60 * 1] history_mins=0 \
-		url="http://download.ip2location.com/lite/IP2LOCATION-LITE-DB1.CSV.ZIP" \
+		url="https://download.ip2location.com/lite/IP2LOCATION-LITE-DB1.CSV.ZIP" \
 		info="[IP2Location.com](http://lite.ip2location.com/database-ip-country)" \
 		ret=
 
@@ -4991,15 +4992,6 @@ update spamhaus_drop $[12*60] 0 ipv4 both \
 	remove_comments_semi_colon \
 	"reputation" \
 	"[Spamhaus.org](http://www.spamhaus.org) DROP list (according to their site this list should be dropped at tier-1 ISPs globally)" \
-	"Spamhaus.org" "http://www.spamhaus.org/"
-
-# extended DROP (EDROP) list.
-# Should be used together with their DROP list.
-update spamhaus_edrop $[12*60] 0 ipv4 both \
-	"http://www.spamhaus.org/drop/edrop.txt" \
-	remove_comments_semi_colon \
-	"reputation" \
-	"[Spamhaus.org](http://www.spamhaus.org) EDROP (extended matches that should be used with DROP)" \
 	"Spamhaus.org" "http://www.spamhaus.org/"
 
 
@@ -7755,8 +7747,7 @@ merge firehol_level1 ipv4 both \
 	dshield \
 	feodo \
 	fullbogons \
-	spamhaus_drop \
-	spamhaus_edrop \
+	spamhaus_drop
 
 merge firehol_level2 ipv4 both \
 	"attacks" \
